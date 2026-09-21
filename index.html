@@ -93,7 +93,36 @@
     font-size: 13px; font-weight: 600; text-transform: uppercase;
     letter-spacing: 1.2px; color: var(--muted);
     margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: space-between;
   }
+
+  /* ---- 源状态统计条 ---- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 20px; font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .stat-label {
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 3px;
+    letter-spacing: .2px;
+  }
+  .stat-num.ok { color: #4ade80; }
+
   .steps {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -138,13 +167,22 @@
   .pkg-meta { font-size: 12px; color: #6f7a8d; margin-top: 7px; }
 
   .empty {
-    text-align: center; padding: 48px 20px; color: var(--muted);
+    text-align: center; padding: 48px 24px; color: var(--muted);
     background: var(--surface);
     border: 1px dashed var(--border);
     border-radius: var(--radius);
     font-size: 14px;
+    line-height: 1.75;
   }
-  .empty strong { display: block; color: var(--text); font-size: 16px; margin-bottom: 8px; }
+  .empty-icon {
+    width: 52px; height: 52px;
+    margin: 0 auto 16px;
+    border-radius: 14px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .empty strong { display: block; color: var(--text); font-size: 16px; margin-bottom: 10px; font-weight: 600; }
   .empty code {
     background: var(--surface2); padding: 2px 7px; border-radius: 6px;
     font-size: 12.5px; font-family: ui-monospace, monospace; color: #a8b6ff;
@@ -155,6 +193,9 @@
     margin-top: 48px; line-height: 1.9;
   }
   footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+  .foot-links { margin-top: 6px; }
+  .foot-links a { margin: 0 8px; }
 </style>
 </head>
 <body>
@@ -179,6 +220,21 @@
     <a class="btn btn-ghost" id="copyBtn" href="#">复制源地址</a>
   </div>
 
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="statPkgs">0</div>
+      <div class="stat-label">软件包</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statArch">2</div>
+      <div class="stat-label">支持架构</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num ok">在线</div>
+      <div class="stat-label">源状态</div>
+    </div>
+  </div>
+
   <div class="sec-title">如何在设备上添加</div>
   <ol class="steps">
     <li>打开 <strong>Sileo</strong>，切到底部 <strong>软件源</strong> 标签。</li>
@@ -192,7 +248,12 @@
 
   <footer>
     <div id="maintainer">fatekingcsr</div>
-    <div>Powered by GitHub Pages · <a id="repoLink" href="#">仓库</a></div>
+    <div class="foot-links">
+      <a id="repoLink" href="#">GitHub 仓库</a>
+      <a href="Release">Release</a>
+      <a href="Packages">Packages</a>
+    </div>
+    <div style="margin-top:8px;opacity:.7">Powered by GitHub Pages</div>
   </footer>
 </div>
 
@@ -206,7 +267,7 @@
   var el = function (id) { return document.getElementById(id); };
 
   el("repoName").textContent = data.name || "vxs";
-  el("repoDesc").textContent = data.description || "";
+  el("repoDesc").textContent = data.tagline || data.description || "";
   el("repoUrl").textContent = url;
   el("maintainer").textContent = data.maintainer ? "维护者：" + data.maintainer : "";
 
@@ -249,19 +310,28 @@
   });
 
   var repoLink = el("repoLink");
-  var m = url.match(/^https:\/\/([^.]+)\.github\.io\/([^/]+)\//);
-  if (m) { repoLink.href = "https://github.com/" + m[1] + "/" + m[2]; }
-  else { repoLink.style.display = "none"; }
+  var m = url.match(/^https:\/\/([^.]+)\.github\.io\/([^/]*)\/?$/);
+  if (m) {
+    repoLink.href = "https://github.com/" + m[1] + "/" + (m[2] || (m[1] + ".github.io"));
+  } else { repoLink.style.display = "none"; }
 
   var list = el("pkgList");
   var pkgs = data.packages || [];
+
+  // --- 统计条 ---
+  el("statPkgs").textContent = pkgs.length;
   el("pkgCount").textContent = pkgs.length ? "· " + pkgs.length + " 个" : "";
+  var archs = {};
+  pkgs.forEach(function (p) { if (p.architecture) archs[p.architecture] = 1; });
+  el("statArch").textContent = Object.keys(archs).length || 2;
 
   if (!pkgs.length) {
     list.innerHTML =
       '<div class="empty">' +
+      '<div class="empty-icon">📦</div>' +
       "<strong>源里还没有软件包</strong>" +
-      "把 .deb 放进 <code>debs/</code> 目录，然后运行 <code>python tools/gen_repo.py</code> 即可。" +
+      "把 .deb 放进 <code>debs/</code> 目录，<br>" +
+      "然后运行 <code>python tools/gen_repo.py</code> 生成索引。" +
       "</div>";
     return;
   }

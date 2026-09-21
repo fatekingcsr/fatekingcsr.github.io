@@ -7,7 +7,7 @@ Architectures: iphoneos-arm64 iphoneos-arm
 Components: main
 Description: vxs 越狱软件源
 Maintainer: fatekingcsr
-Date: Mon, 21 Sep 2026 01:53:23 +0000
+Date: Mon, 21 Sep 2026 02:00:49 +0000
 MD5Sum:
  d41d8cd98f00b204e9800998ecf8427e 0 Packages
  fa9ac5a217b5547bc7dd4e6e894fe135 20 Packages.gz

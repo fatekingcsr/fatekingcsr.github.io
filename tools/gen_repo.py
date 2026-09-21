@@ -40,8 +40,9 @@ def load_config() -> dict:
     cfg = {
         "name": "vxs",
         "description": "vxs 越狱软件源",
+        "tagline": "iOS 越狱插件与工具，持续更新",
         "maintainer": "fatekingcsr",
-        "url": "https://fatekingcsr.github.io/vxs/",
+        "url": "https://fatekingcsr.github.io/",
         "accent": "#5B6CFF",
     }
     if REPO_JSON.exists():
@@ -259,6 +260,7 @@ def main() -> None:
     web = {
         "name": cfg["name"],
         "description": cfg["description"],
+        "tagline": cfg.get("tagline", cfg["description"]),
         "maintainer": cfg["maintainer"],
         "url": cfg["url"],
         "accent": cfg.get("accent", "#5B6CFF"),
@@ -267,6 +269,7 @@ def main() -> None:
                 "package": c.get("Package", ""),
                 "name": c.get("Name", c.get("Package", "")),
                 "version": c.get("Version", ""),
+                "architecture": c.get("Architecture", ""),
                 "description": c.get("Description", "").split("\n")[0],
                 "section": c.get("Section", ""),
                 "author": c.get("Author", c.get("Maintainer", "")),
