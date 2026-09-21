@@ -27,8 +27,31 @@ https://fatekingcsr.github.io/vxs/
    git push
    ```
 
-推送到 `main` 后，GitHub Actions 也会自动重建索引（改 `debs/`、`repo.json`、
-`tools/gen_repo.py` 时触发），本地跑一次只是为了即时看到效果。
+推送到 `main` 后 CI 会自动重建索引（改 `debs/`、`repo.json`、
+`tools/gen_repo.py` 时触发）。本地跑一次只是为了即时看到效果。
+
+### 发布（受限网络下）
+
+```bash
+python tools/publish.py -m "add: <包名>"
+```
+
+脚本先试 `git push`；若 `github.com:443` 不通（国内常见，报
+`CONNECT tunnel failed` / `502`），自动降级为通过 GitHub REST Contents API
+逐个上传变更文件，照样能发布成功。
+
+### 启用自动构建 CI
+
+本仓库的 token 缺少 `workflow` scope，无法直接推送 `.github/workflows/`。
+工作流模板已放在 `tools/build-repo.yml`，启用方式二选一：
+
+1. **网页方式（推荐）**：在 GitHub 仓库页 `Add file` → `Create new file`，
+   文件名填 `.github/workflows/build-repo.yml`，把 `tools/build-repo.yml`
+   的内容粘进去提交。
+2. **补权限**：本机运行 `gh auth refresh -h github.com -s workflow`，
+   然后 `git mv tools/build-repo.yml .github/workflows/build-repo.yml` 再推送。
+
+不启用 CI 也完全可用，手动跑 `tools/gen_repo.py` + `tools/publish.py` 即可。
 
 ## 架构
 
@@ -51,6 +74,8 @@ https://fatekingcsr.github.io/vxs/
 | `repo.json` | 源名称 / 简介 / 维护者 / 地址，改完重新生成 |
 | `CydiaIcon.png` | Sileo 里显示的源图标 |
 | `tools/gen_repo.py` | 索引生成器（纯 Python 解 deb，无需 dpkg-deb） |
+| `tools/publish.py` | 受限网络发布脚本（git push → Contents API 自动降级） |
+| `tools/build-repo.yml` | GitHub Actions 自动重建索引模板（见上文启用方式） |
 | `.nojekyll` | 必须保留，否则 GitHub Pages 的 Jekyll 会干扰 |
 
 ## 改了源名称 / 简介

@@ -31,7 +31,7 @@ TRACKED = [
     ".gitattributes",
     ".gitignore",
     ".nojekyll",
-    ".github/workflows/build-repo.yml",
+    "tools/build-repo.yml",
     "CydiaIcon.png",
     "Packages",
     "Packages.bz2",
@@ -194,16 +194,26 @@ def main():
 
 
 def changed_files() -> list[str]:
-    """Files differing from HEAD's version, plus new ones."""
-    if not GIT:
-        return TRACKED
-    res = run([GIT, "status", "--porcelain"], cwd=str(ROOT))
+    """Files whose local bytes differ from the remote branch.
+
+    We compare against the remote blob sha rather than local git status,
+    because API-made commits leave the local repo unaware of the difference
+    and a clean working tree would otherwise look like "nothing to do".
+    """
     out = []
-    for line in (res.stdout or "").splitlines():
-        if len(line) > 3:
-            name = line[3:].strip().strip('"')
-            if name in TRACKED:
-                out.append(name)
+    for rel in TRACKED:
+        path = ROOT / rel
+        if not path.exists():
+            continue
+        import base64
+        import hashlib as _h
+
+        local = path.read_bytes()
+        # git blob sha1 = sha1("blob <len>\0" + content)
+        header = f"blob {len(local)}\0".encode()
+        local_sha = _h.sha1(header + local).hexdigest()
+        if local_sha != remote_sha(rel):
+            out.append(rel)
     return out
 
 
