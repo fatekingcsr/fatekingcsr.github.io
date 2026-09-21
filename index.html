@@ -276,7 +276,13 @@
   }
 
   // placeholder / invalid URL guard
-  var bad = !/^https:\/\/[^/]+\/[^/]+\/$/.test(url) || /your-?name|example|<|>/.test(url);
+  // 合法形态有两种：
+  //   项目站  https://<user>.github.io/<repo>/
+  //   主页站  https://<user>.github.io/       （只有一个路径段）
+  // 只有明确是占位符（含 your-name / example / 尖括号）或压根不是 https 时才告警。
+  var isHttps = /^https:\/\/[^/]+\//.test(url);
+  var isPlaceholder = /your-?name|example|<|>|\{\{/.test(url);
+  var bad = !isHttps || isPlaceholder;
   if (bad) {
     el("urlWarn").classList.add("show");
   }
