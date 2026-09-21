@@ -1,0 +1,29 @@
+# --- 关键：这些索引文件必须提交，绝不能忽略 ---
+!Packages
+!Packages.gz
+!Packages.bz2
+!Release
+!packages.json
+!repo-data.js
+
+# 但 debs 里的压缩包走 Git LFS 或直接提交均可，不忽略
+!debs/*.deb
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# WorkBuddy 运行数据（不要提交）
+.workbuddy/
