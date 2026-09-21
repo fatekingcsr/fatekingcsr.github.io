@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OWNER = "fatekingcsr"
-REPO = "vxs"
+REPO = "vxs.github.io"
 BRANCH = "main"
 
 # files the repo owns; anything else in the tree is ignored by the API path

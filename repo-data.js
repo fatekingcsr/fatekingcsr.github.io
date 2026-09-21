@@ -2,7 +2,7 @@ window.SILEO_REPO = {
   "name": "vxs",
   "description": "vxs 越狱软件源",
   "maintainer": "fatekingcsr",
-  "url": "https://fatekingcsr.github.io/vxs/",
+  "url": "https://fatekingcsr.github.io/",
   "accent": "#5B6CFF",
   "packages": []
 };

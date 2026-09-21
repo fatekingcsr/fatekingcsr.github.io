@@ -5,8 +5,11 @@ Sileo / Zebra / Cydia 越狱软件源，托管在 GitHub Pages。
 **源地址**
 
 ```
-https://fatekingcsr.github.io/vxs/
+https://fatekingcsr.github.io/
 ```
+
+> 仓库名为 `vxs.github.io`，因此 GitHub Pages 把它识别为**用户主页站**，
+> 服务在根路径 `/` 下（不是 `/vxs/`）。
 
 > 地址必须以 `/` 结尾；必须是 HTTPS。GitHub Pages 自带 HTTPS。
 
