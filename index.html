@@ -188,14 +188,7 @@
     font-size: 12.5px; font-family: ui-monospace, monospace; color: #a8b6ff;
   }
 
-  footer {
-    text-align: center; color: #5c6678; font-size: 12.5px;
-    margin-top: 48px; line-height: 1.9;
-  }
-  footer a { color: var(--muted); text-decoration: none; }
-  footer a:hover { color: var(--text); }
-  .foot-links { margin-top: 6px; }
-  .foot-links a { margin: 0 8px; }
+  .sec-title { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -245,16 +238,6 @@
 
   <div class="sec-title">软件包 <span id="pkgCount"></span></div>
   <div id="pkgList"></div>
-
-  <footer>
-    <div id="maintainer">fatekingcsr</div>
-    <div class="foot-links">
-      <a id="repoLink" href="#">GitHub 仓库</a>
-      <a href="Release">Release</a>
-      <a href="Packages">Packages</a>
-    </div>
-    <div style="margin-top:8px;opacity:.7">Powered by GitHub Pages</div>
-  </footer>
 </div>
 
 <script src="repo-data.js"></script>
@@ -269,7 +252,6 @@
   el("repoName").textContent = data.name || "vxs";
   el("repoDesc").textContent = data.tagline || data.description || "";
   el("repoUrl").textContent = url;
-  el("maintainer").textContent = data.maintainer ? "维护者：" + data.maintainer : "";
 
   if (data.accent) {
     document.documentElement.style.setProperty("--accent", data.accent);
@@ -314,12 +296,6 @@
       document.body.removeChild(ta);
     }
   });
-
-  var repoLink = el("repoLink");
-  var m = url.match(/^https:\/\/([^.]+)\.github\.io\/([^/]*)\/?$/);
-  if (m) {
-    repoLink.href = "https://github.com/" + m[1] + "/" + (m[2] || (m[1] + ".github.io"));
-  } else { repoLink.style.display = "none"; }
 
   var list = el("pkgList");
   var pkgs = data.packages || [];
